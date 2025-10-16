@@ -4,7 +4,7 @@ import pandas as pd
 from zenml import step
 from pandas import DataFrame
 from typing import Annotated
-from src.data_cleaning import StandardizeColumnsStrategy, BinarizeStrategy, OneHotEncodeStrategy, OrdinalEncodeStrategy, DataPreprocess
+from data_preprocessing import StandardizeColumnsStrategy, BinarizeStrategy, OneHotEncodeStrategy, OrdinalEncodeStrategy, DataPreprocess
 logging.basicConfig(level=logging.INFO)
 
 @step
