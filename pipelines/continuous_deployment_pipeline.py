@@ -40,41 +40,34 @@ def deployment_trigger(
     name="continuous_deployment_pipeline",
     description="End-to-end ML pipeline with continuous deployment to MLflow"
 )
-def continuous_deployment_pipeline():
+def continuous_deployment_pipeline(
+    data_path: str,
+    data_format: str,
+    model_name: str
+):
     """
     End-to-end continuous deployment pipeline.
-    
-    Steps:
-        1. Ingest data
-        2. Preprocess data
-        3. Split data
-        4. Train model
-        5. Evaluate model
-        6. Deploy model to MLflow if accuracy threshold is met
     """
-    try:
-        logging.info("Starting continuous deployment pipeline..."
-                    "Step 1: Ingesting data...")
-        df = ingest_data()
-        
-        logging.info("Step 2: Preprocessing data...")
-        df = preprocess_data(df)
-        
-        logging.info("Step 3: Splitting data...")
-        X_train, X_test, y_train, y_test = split_data(df)
-        
-        # Model pipeline
-        logging.info("Step 4: Training model...")
-        model = train_model(X_train, y_train)
-        
-        logging.info("Step 5: Evaluating model...")
-        accuracy = evaluate_model(model, X_test, y_test)
-        deployment_decision = deployment_trigger(accuracy)
-        
-        mlflow_model_deployer_step(
-            model = model,
-            deployment_decision = deployment_decision
-        )
-    except Exception as e:
-        logging.error(f"Pipeline failed with error: {e}", exc_info=True)
-        raise
+    # Step 1 -- Ingest Data
+    df = ingest_data(data_path, data_format)
+    
+    # Step 2 -- Preprocess Data
+    df = preprocess_data(df)
+    
+    #Step 3 -- Split Data
+    X_train, X_test, y_train, y_test = split_data(df)
+    
+    # Step 4 -- Train Model
+    model = train_model(model_name, X_train, y_train)
+    
+    # Step 5 -- Evaluate Model
+    accuracy = evaluate_model(model, X_test, y_test)
+    
+    # Step 6 -- Deployment Decision
+    deployment_decision = deployment_trigger(accuracy)
+    
+    # Step 7 -- Deploy the model if it meets required threshold
+    mlflow_model_deployer_step(
+        model = model,
+        deployment_decision = deployment_decision
+    )
