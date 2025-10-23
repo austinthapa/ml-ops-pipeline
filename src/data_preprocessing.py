@@ -1,4 +1,5 @@
 import logging
+import joblib
 import pandas as pd
 
 from pandas import DataFrame
@@ -50,6 +51,7 @@ class OneHotEncodeStrategy(Strategy):
             onehot_cols = ['Ethnicity','ChestPainType', 'ECGResults', 'Slope', 'Thalassemia', 'Residence', 'EmploymentStatus', 'MaritalStatus']
             onehot_encoder = OneHotEncoder(drop="first", handle_unknown="ignore", sparse_output=False)
             encoded_array = onehot_encoder.fit_transform(df[onehot_cols])
+            joblib.dump(onehot_encoder, "/Users/anilthapa/ml-ops-pipeline/preprocessor/onehot_encoder.joblib")
             encoded_cols = onehot_encoder.get_feature_names_out(onehot_cols)
             encoded_df = DataFrame(encoded_array, columns=encoded_cols, index = df.index)
             
@@ -72,6 +74,7 @@ class OrdinalEncodeStrategy(Strategy):
                 handle_unknown="use_encoded_value",
                 unknown_value=-1
             )
+            joblib.dump(ordinal_encoder, "/Users/anilthapa/ml-ops-pipeline/preprocessor/ordinal_encoder.joblib")
             df[ordinal_cols] = ordinal_encoder.fit_transform(df[ordinal_cols])
             
             logging.info(f"Ordinal Encoded Successfully...")
@@ -95,6 +98,7 @@ class StandardizeColumnsStrategy(Strategy):
             
             scaler = StandardScaler()
             df[num_cols] = scaler.fit_transform(df[num_cols])
+            joblib.dump(scaler, "/Users/anilthapa/ml-ops-pipeline/preprocessor/scaler.joblib")
             logging.info("Standardized Numerical Columns Successfully...")
             return df
         except Exception as e:
