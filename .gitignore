@@ -3,3 +3,6 @@ mlops-venv
 
 # MLFLow Server
 mlruns
+
+# Notebook Cachin
+.ipynb_checkpoints
