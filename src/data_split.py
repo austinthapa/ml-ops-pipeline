@@ -17,31 +17,67 @@ class Strategy(ABC):
     
 class TrainTestSplitStrategy(Strategy):
     """
-    Split the dataset into train and test split
+    Strategy for performing a standard train-test split on a dataset.
+
+    Requirements:
+        The DataFrame must contain a column named `'Outcome'` which is used
+        as the target variable.
+
+    Parameters:
+        df(pandas.DataFrame) :The input dataset.
+
+    Returns:
+        (X_train, X_test, y_train, y_test): The resulting training and testing feature/label splits.
+
+    Raises:
+        ValueError: If the required `'Outcome'` column is not present.
+        Exception: For unexpected errors (logged and re-raised).
     """
-    def execute(self, df: DataFrame) -> Tuple[DataFrame, DataFrame, Series, Series]:
+    def execute(self, df: DataFrame, test_size: float = 0.2, random_state:int = 42) -> Tuple[DataFrame, DataFrame, Series, Series]:
         try:
             if "Outcome" not in df.columns:
                 raise ValueError("Expected column 'Outcome' not found in dataframe")
             X = df.drop(columns=["Outcome"])
-            y = df["Outcome"]
-            X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.15, shuffle=True, random_state=42)
-            logging.info("Train & Test split successfully created")    
+            y = df["Outcome"].map({
+                "Heart Attack": 1,
+                "No Heart Attack": 0
+            })
+            X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, shuffle=True, random_state=random_state)
+            logging.info("Train & Test split successfully created:\n"
+                         f"Train shape: {X_train.shape}\n"
+                         f"Test shape: {X_test.shape}\n")
             return X_train, X_test, y_train, y_test
         
         except Exception as e:
             logging.error(f"Unexpected error occured during train test split: {e}")
-            raise e
+            raise
+        
 class StratifiedSplitStrategy(Strategy):
     """
-    Split the dataset into train and test split based on the distribution
+    Strategy for performing a stratified train-test split.
+
+    Requirements:
+        The DataFrame must contain a column `'Outcome'` that acts as the target.
+
+    Parameters:
+        df(pandas.DataFrame): The input dataset.
+
+    Returns:
+        (X_train, X_test, y_train, y_test): The stratified training and testing splits.
+
+    Raises:
+        ValueError: If `'Outcome'` column is missing.
+        Exception: For unexpected errors (logged and re-raised).
     """
     def execute(self, df: DataFrame) -> Tuple[DataFrame, DataFrame, Series, Series]:
         try:
             if "Outcome" not in df.columns:
                 raise ValueError("Expected column 'Outcome' not found in dataframe")
             X = df.drop(columns=["Outcome"])
-            y = df["Outcome"]
+            y = df["Outcome"].map({
+                "Heart Attack": 1,
+                "No Heart Attack": 0
+            })
             X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.15, stratify=y, shuffle=True, random_state=42)
             logging.info("Stratified Train & Test Split Complete")
             return X_train, X_test, y_train, y_test
