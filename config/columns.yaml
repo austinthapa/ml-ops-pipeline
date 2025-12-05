@@ -1,0 +1,60 @@
+features:
+  numeric:
+    - Age
+    - Cholesterol
+    - BloodPressure
+    - HeartRate
+    - BMI
+    - PhysicalActivity
+    - AlcoholConsumption
+    - StressLevel
+    - Income
+    - MaxHeartRate
+    - ST_Depression
+    - NumberOfMajorVessels
+
+  onehot:
+    - Ethnicity
+    - ChestPainType
+    - ECGResults
+    - Slope
+    - Thalassemia
+    - Residence
+    - EmploymentStatus
+    - MaritalStatus
+
+  ordinal:
+    - Diet
+    - EducationLevel
+
+  binary:
+    - Gender
+    - Medication
+    - ExerciseInducedAngina
+
+ordinal_categories:
+  Diet:
+    - Unhealthy
+    - Moderate
+    - Healthy
+  
+  EducationLevel:
+    - High School
+    - College
+    - Postgraduate
+
+binary_mappings:
+  Gender:
+    Male: 1
+    Female: 0
+
+  Medication:
+    "Yes": 1
+    "No": 0
+
+  ExerciseInducedAngina:
+    "Yes": 1
+    "No": 0
+
+target:
+  Outcome
