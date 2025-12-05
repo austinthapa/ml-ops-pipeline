@@ -1,5 +1,6 @@
 import logging
 import mlflow
+import joblib
 
 from abc import ABC, abstractmethod
 from pandas import DataFrame, Series
@@ -49,6 +50,10 @@ class Model(ABC):
                 mlflow.sklearn.log_model(self.model, artifact_path="model")
             
                 logging.info(f"{self.__class__.__name__} training accuracy: {train_acc}")
+                
+                joblib.dump(self.model, "artifacts/model.joblib")
+                logging.info(f"Model saved locally at artifacts/model.joblib")
+                
                 return self.model
         except Exception as e:
             logging.error(f"Error training {self.__class__.__name__}: {e}")
