@@ -1,8 +1,20 @@
 # Virtual Env
-mlops-venv
+mlops-venv/
 
-# MLFLow Server
-mlruns
+# MLFlow Server
+mlruns/
 
-# Notebook Cachin
+# Notebook Caching
 .ipynb_checkpoints
+*.nbconvert.ipynb
+
+# ZenML
+.zen/
+
+# Local artifacts
+artifacts/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class

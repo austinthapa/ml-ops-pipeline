@@ -1,0 +1,25 @@
+# Ignore virtual environment
+mlops-venv/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Git metadata
+.git/
+.gitignore
+
+# Docker files (optional)
+.dockerignore
+
+# Development / documentation
+notebooks/
+tests/
+README.md
+LICENSE
+
+# MLflow artifacts and local outputs
+data/
+mlruns/
+artifacts/
