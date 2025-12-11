@@ -22,4 +22,3 @@ LICENSE
 # MLflow artifacts and local outputs
 data/
 mlruns/
-artifacts/
