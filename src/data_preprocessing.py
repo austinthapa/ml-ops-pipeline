@@ -154,9 +154,8 @@ class OrdinalEncodeStrategy(Strategy):
                 handle_unknown="use_encoded_value",
                 unknown_value=-1
             )
-            joblib.dump(ordinal_encoder, "artifacts/ordinal_encoder.joblib")
             df[ordinal_cols] = ordinal_encoder.fit_transform(df[ordinal_cols])
-            
+            joblib.dump(ordinal_encoder, "artifacts/ordinal_encoder.joblib")
             logging.info(f"Ordinal Encoded Successfully...")
             return df
         except Exception as e:
