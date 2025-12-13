@@ -169,12 +169,17 @@ def preprocess_input(
     config = request.app.state.config
 
     # --- Scale numeric columns ---
+    logger.info(f"Scaling numeric features started...")
     scaler = request.app.state.scaler
     num_cols = config["features"]["numeric"]
+    logger.info("Numeric columns: \n"
+                f"{num_cols}")
     if num_cols:
         df[num_cols] = scaler.transform(df[num_cols])
-
+    logger.info(f"Scaling numeric features completed...")
+    
     # --- Onehot encode ---
+    logger.info(f"Onehot encoding features started...")
     onehot_encoder = request.app.state.onehot_encoder
     onehot_cols = config["features"]["onehot"]
     if onehot_cols:
@@ -183,21 +188,26 @@ def preprocess_input(
         onehot_df = pd.DataFrame(onehot_encoded, columns=feature_names, index=df.index)
         df = df.drop(columns=onehot_cols)
         df = pd.concat([df, onehot_df], axis=1)
-
+    logger.info(f"Onehot encoding features completed...")
+    
     # --- Ordinal encode ---
+    logger.info(f"Ordinal encoding features started...")
     ordinal_encoder = request.app.state.ordinal_encoder
     ordinal_cols = config["features"]["ordinal"]
     if ordinal_cols:
         df[ordinal_cols] = ordinal_encoder.transform(df[ordinal_cols])
-
+    logger.info(f"Ordinal encoding features started...")
+    
     # --- Binary map ---
+    logger.info(f"Binary encoding features started...")
     binary_mappings = config["binary_mappings"]
     for col, mapping in binary_mappings.items():
         if col in df.columns:
             df[col] = df[col].map(mapping)
             if df[col].isna().any():
                 raise ValueError(f"Invalid value for {col}. Expected one of {list(mapping.keys())}")
-
+    logger.info(f"Binary encoding features completed...")
+    
     model = request.app.state.model
     feature_order = model.feature_names_in_
 
@@ -236,36 +246,3 @@ async def predict_heart_attack(
         raise HTTPException(status_code=500, detail="Internal server error during prediction")
 
 
-# curl -X POST "http://localhost:8000/predict" -H "Content-Type: application/json" -d '{
-#   "Age": 58.0,
-#   "Gender": "Male",
-#   "Cholesterol": 234.0,
-#   "BloodPressure": 150.0,
-#   "HeartRate": 160.0,
-#   "BMI": 25.5,
-#   "Smoker": 0,
-#   "Diabetes": 0,
-#   "Hypertension": 1,
-#   "FamilyHistory": 1,
-#   "PhysicalActivity": 5.0,
-#   "AlcoholConsumption": 0.0,
-#   "Diet": "Moderate",
-#   "StressLevel": 3.0,
-#   "Ethnicity": "Caucasian",
-#   "Income": 60000.0,
-#   "EducationLevel": "College",
-#   "Medication": "Yes",
-#   "ChestPainType": "Atypical",
-#   "ECGResults": "Normal",
-#   "MaxHeartRate": 180.0,
-#   "ST_Depression": 1.5,
-#   "ExerciseInducedAngina": "No",
-#   "Slope": "Upsloping",
-#   "NumberOfMajorVessels": 2.0,
-#   "Thalassemia": "Normal",
-#   "PreviousHeartAttack": 0,
-#   "StrokeHistory": 0,
-#   "Residence": "Urban",
-#   "EmploymentStatus": "Employed",
-#   "MaritalStatus": "Married"
-# }
